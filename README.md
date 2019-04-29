@@ -23,7 +23,8 @@ prototyping and visualization is performed in Jupyter notebooks
  
 First I assumed the library code is solid, and I decided against writing unit tests for it. 
 I verified the code visually, by overlaying contour and the mask 
-(see last cells of the [task1 notebook](task1.ipynb))
+![overlay](task1.png)
+(for code, see last cells of the [task1 notebook](task1.ipynb))
 
 > What changes did you make to the code, if any, in order to integrate it into our production code base?
 
@@ -40,7 +41,9 @@ i. Manually ensured the output conforms to the specifications;
 
 ii. Wrote unit tests for output format+shape and random shuffling
 
-iii. Inspected output visually, see last cell of the [task2 notebook](task2.ipynb)
+iii. Inspected output visually
+![overlay](task2.png)
+for code, see last cell of the [task2 notebook](task2.ipynb)
 
 > Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 
