@@ -18,16 +18,18 @@ class Dir():
         content    -- a pandas.Series of filenames indexed by slice number
     '''
     def __init__(self, path):
+        """":param path: directory location
+        """
         self.path = path
     
     def __repr__(self):
         return 'Directory: {}'.format(self.path)
         
     @classmethod
-    def parse_name(cls, fn_dcm):
+    def parse_name(cls, filename):
         raise NotImplementedError
 
-    def _list_to_series(self,):
+    def _list_to_series(self):
         'returns a pandas.Series of filenames indexed by slice number'
         if not hasattr(self, 'series_name'):
             series_name = os.path.basename(os.path.dirname(self.path))
@@ -49,6 +51,10 @@ class Dir():
 class DicomDir(Dir):
     @classmethod
     def parse_name(cls, fn_dcm):
+        """Parses the DICOM file name
+        :param fn_dcm: filepath to DICOM file
+        :return: integer for slice number, or None if failed to parse"""
+
         matches = re.match('([\d]+).dcm', fn_dcm)
         if matches is not None:
             slice_num = matches.groups()[0]
@@ -61,7 +67,11 @@ class DicomDir(Dir):
         
 class ContourDir(Dir):
     @classmethod
-    def parse_name(cls, fn_contour):
+    def parse_name(cls, fn_contour: str):
+        """Parses the contour file name
+        :param fn_contour: filepath to contour file
+        :return: integer for slice number, or None if failed to parse"""
+
         matches = re.match('IM-[\d]+-([\d]+)-[a-z]contour-manual.txt', fn_contour)
         if matches is not None:
             slice_num = matches.groups()[0]
@@ -73,14 +83,19 @@ class ContourDir(Dir):
 
 
 def match_case_filenames(dirname_dicom: str, 
-                         dirname_i_contour:str) -> pd.DataFrame:
+                         dirname_i_contour:str,
+                         join:str='inner') -> pd.DataFrame:
     '''matches slices in a pair of DICOM and i-contour directories
     for one series/case
+    :param dirname_dicom:      path to dicom series directory
+    :param dirname_i_contour:  path to i-contour series directory
+    :param join:               join type (default: inner)
+    :return filenames_matched: a pandas.DataFrame with matched locations
     '''
     filenames_dicom = DicomDir(dirname_dicom).content
     filenames_icontour = ContourDir(dirname_i_contour).content
     filenames_matched = pd.concat([filenames_dicom, filenames_icontour],
-                                 axis=1, join='inner')
+                                 axis=1, join=join)
     if len(filenames_matched) < len(filenames_icontour):
         warn(f'some dicom slices are missing: {filenames_matched.shape[0]} ' +
               f'matches out of {filenames_icontour.shape[0]} contours')
@@ -110,9 +125,12 @@ def read_slice_with_annotations(slicedict: Dict, with_contour=False) -> Dict:
 
 
 def get_slice_set(metadata: pd.DataFrame, dir_data = 'final_data') -> pd.DataFrame:
-    ''' returns a pandas.DataFrame with paired paths 
-    to images and annotations for a set of series/cases 
-    listed in the metadata DataFrame
+    '''construct a table with paired image & annotation  paths
+    for a set of series/cases listed in the metadata DataFrame
+    :param metadata:   metadata from link.csv
+    :param dir_data:   top-level data directory
+    :return filenames: DataFrame of filenames for images and annotations 
+                       as well as case and slide ids
     '''
     filenames = []
     for ii, vv in metadata.iterrows():
@@ -143,9 +161,11 @@ if __name__ == '__main__':
 
     print(filenames.head())
 
+    print('reading first 5 slices')
     for kk, slicedict in filenames.iterrows():
-        print("reading annotations for slide #", kk)
+        if kk>=5:
+            break
         sample = read_slice_with_annotations(slicedict)
+        print(f'slice {kk}')
 
     print("done")
-
