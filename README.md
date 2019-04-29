@@ -34,7 +34,8 @@ I did not have to make any changes to the provided `parsing.py` prototype.
 
 > Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
 
-I wrapped the DataFrame and a reading function from previous task into a HeartDataset object
+I wrapped the DataFrame and a reading function from previous task into a HeartDataset class,
+so that it is easier to work with it downstream, specifically to use it with DataLoader class.
 
 > How do you/did you verify that the pipeline was working correctly?
 
@@ -50,5 +51,6 @@ for code, see last cell of the [task2 notebook](task2.ipynb)
 
 I would first convert the contours to run-length encoding (RLE) instead of constructing masks from contours on-flight
 to accelerate loading time. I would also explore other optimization with memory mapping or any framework-specific
-optimized data formats.
+optimized data formats. I also found out that DataLoader has issues with random seed setting for shuffling while
+writting a unit test -- another thing to fix.
 
