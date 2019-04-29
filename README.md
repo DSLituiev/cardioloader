@@ -31,6 +31,7 @@ I verified the code visually, by overlaying contour and the mask
 I did not have to make any changes to the provided `parsing.py` prototype.
 
 ### Task 2
+
 > Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
 
 I wrapped the DataFrame and a reading function from previous task into a HeartDataset object
@@ -47,10 +48,7 @@ for code, see last cell of the [task2 notebook](task2.ipynb)
 
 > Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 
-I would first convert the contours to run-length encoding (RLE) instead of constructing masks every time 
+I would first convert the contours to run-length encoding (RLE) instead of constructing masks from contours on-flight
 to accelerate loading time. I would also explore other optimization with memory mapping or any framework-specific
 optimized data formats.
-
-
-
 
