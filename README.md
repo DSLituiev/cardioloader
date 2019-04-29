@@ -7,6 +7,7 @@ we assume that slices without annotations can be ignored
 - pillow
 - numpy
 - pandas
+- pytorch (in task 2)
 - matplotlib (notebooks only)
 
 
