@@ -50,10 +50,8 @@ def np_collate(batch):
         if elem.shape == ():  # scalars
             py_type = float if elem.dtype.name.startswith('float') else int
             return (list(map(py_type, batch)))
-    elif isinstance(batch[0], int):
+    elif isinstance(batch[0], (int, float)):
         return np.stack(batch)
-    elif isinstance(batch[0], float):
-        return torch.DoubleTensor(batch)
     elif isinstance(batch[0], str):
         return batch
     elif isinstance(batch[0], dict):
