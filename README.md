@@ -62,9 +62,15 @@ can be used to derive i-contours. To explore this possibility, I performed follo
 
   Other thresholding methods can be considered, but given constraint of masking, only Otsu with some pre/post-processing has been explored so far.
 
-  The results are quite OK (IoU = 0.81 +/- 0.02)
+  The results are quite OK (IoU = 0.81 +/- 0.02). 
+  
+  Legend:
+  - o-contour is in red
+  - i-contour is in green
+  - predicted i-contour is in cyan
 
 ![thresholded](closeup_thresholded.png)
+
 
 2. Other heuristic (non-machine learning)-based approaches, besides simple thresholding, that might work in this case:
 potentially morphologic dilation of the space outside o-contour, which had to assume some constant width of the muscle.
@@ -76,6 +82,9 @@ In my quick implementation trained for 20 epochs, I achieved IoU of 0.87 +/- 0.0
 which is an improvement over thresholding-based approach. Still some severe morphological artifacts can be found in predictions
 (see figure below for the same slice as above).
 
+  Legend:
+  - i-contour is in green
+  - predicted i-contour is in cyan
 ![](closeup_dl.png)
 
 code in [unet.py](unet.py) and [this notebook](asgn2-deeplearning.ipynb)
