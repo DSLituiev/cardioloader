@@ -60,10 +60,12 @@ can be used to derive i-contours. To explore this possibility, I performed follo
 
 ![thresholded](closeup_thresholded.png)
 
-2. Other heuristic (non-machine learning)-based approaches, besides simple thresholding, that might work in this case: potentially morphologic dilation of the space outside o-contour might work.
+2. Other heuristic (non-machine learning)-based approaches, besides simple thresholding, that might work in this case:
+potentially morphologic dilation of the space outside o-contour, which had to assume some constant width of the muscle.
 
-3. Appropriate deep learning-based approach to solve this problem would be U-net or segnet like architectures
-with aggressive data augmentation on close-up images with only within LV space to reduce search space.
+3. Appropriate deep learning-based approach to solve this problem would involve any semantic segmentation model, 
+such as U-net or Segnet like architectures, with aggressive data augmentation.
+In order to reduce search space, close-up images with only within LV space should be considered.
 In my quick implementation trained for 20 epochs, I achieved IoU of 0.87 +/- 0.01 (trained on 3 cases, tested on 1 case), 
 which is an improvement over thresholding-based approach. Still some severe morphological artifacts can be found in predictions
 (see figure below for the same slice as above).
@@ -77,13 +79,15 @@ code in [unet.py](unet.py) and [this notebook](asgn2-deeplearning.ipynb)
 Caviat: In terms of implementation, I did not use training/validation set split to tune heuristic hyperparameters, so
 comparison might not be fair.
 
-Advantages: DL methods are more flexible and generally achieve higher performance given _enough data_. In this case,
+**Advantages of DL**: DL methods are more flexible and generally achieve higher performance given _enough data_. In this case,
 IoU achieved with DL methods was still higher than one achieved with heuristic methods.
 
-Generally, heuristic method are computationally faster and require less data.
+**Advantages of heuristics**: Generally, heuristic method are computationally faster and require less data.
 Formally speaking, there is no training procedure for heuristic methods, so they require no training data. 
 Practically though, hyperparameter optimization still have to take place and some data is required, which still normally takes fewer
-cases. Also the model is black box, i.e. it is hard to explain to human why the machine did what it did. Explainability
+cases. 
+
+**Disadvantages of DL**: Due to their high complexity, DL models are black box, i.e. it is hard to explain to human why the machine did what it did. Explainability
 can be achieved by using additional explanatory model, examining inputs and (intermediate) outputs, 
 and rarely by looking within the model itself.
 
