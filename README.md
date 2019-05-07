@@ -21,15 +21,15 @@ we assume that slices without annotations can be ignored
 ### Part 1: Parse the o-contours
 
 #### Implementation notes
-I had to modify `get_slice_set` and `match_case_filenames` function to take
-directory name for o-contours, and `read_slice_with_annotations` function 
-to call parsing for o-contours if respective column is present in the 
-`HeartDataset.filenames` table. 
-I also added `join` flag for table join type to the `match_case_filenames` function,
+I had to modify several functions in [task1.py](task1.py):
+- `get_slice_set` and `match_case_filenames` function to take
+directory name for o-contours,
+- `read_slice_with_annotations` function to call parsing for o-contours
+if respective column is present in the `HeartDataset.filenames` table. 
+- `join` flag for table join type was added to the `match_case_filenames` function,
 which is helpful for data exploration.
-I re-used same reader class `ContourDir` as for i-contours within that function.
-
-I chose to keep these functions separate from the `HeartDataset` for now as it made debugging easier.
+- reader class `ContourDir` used earlier for i-contours has been reused within the `match_case_filenames` function.
+- I chose to keep these functions separate from the `HeartDataset` [in task2.py](task2.py) for now as it made debugging easier.
 For production, they might be incorporated into `HeartDataset` class.
 
 As a result of changes, every item returned by `HeartDataset` objects (initialized with a table containing 
