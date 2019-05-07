@@ -50,9 +50,9 @@ can be used to derive i-contours. To explore this possibility, I performed follo
 - histograms for pixel intensities within the pool and the muscle for one image slice
 ![histogram](i_o_histograms.png)
 
-- in attempt to use simple thresholding scheme for automatically create the i-contours, given the o-contours, I applied Otsu method.
-  To be able to use o-mask, I had to re-implement thresholding steps. I also used dilation operation to post-process the
-  thresholded image.
+- in order to automatically create the i-contours, given the o-contours, I applied Otsu method.
+  To be able to use o-mask to narrow down the pixels considered, I had to re-implement thresholding steps.
+  I also used dilation operation to post-process the thresholded image.
   The code can be found in [task4.py](task4.py) and [this notebook](asgn2-threshold.ipynb)
   I would consider other thresholding methods, but given constraint of masking, only Otsu with some pre/post-processing has been explored so far.
 
