@@ -90,6 +90,7 @@ def match_case_filenames(dirname_dicom: str,
     for one series/case
     :param dirname_dicom:      path to dicom series directory
     :param dirname_i_contour:  path to i-contour series directory
+    :param dirname_0_contour:  path to o-contour series directory
     :param join:               join type (default: inner)
     :return filenames_matched: a pandas.DataFrame with matched locations
     '''
