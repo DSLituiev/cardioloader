@@ -15,20 +15,28 @@ from torch.utils.data import Dataset, DataLoader
 class HeartDataset(Dataset):
 
     """An class representing a heart MRI dataset.
+    A subclass of torch.utils.data.Dataset.
     """
-    def __init__(self, filenames):
+    def __init__(self, filenames, with_contour=False):
+        """
+        :param filenames:     a pandas.DataFrame with file paths to dicoms and conoutrs
+        :param with_contour:  return contours together with masks and images (bool flag)
+        """
         self.filenames = filenames
+        self.with_contour = with_contour
         
     def __getitem__(self, index):
         slicedict = self.filenames.iloc[index]
-        sample = read_slice_with_annotations(slicedict)
+        sample = read_slice_with_annotations(slicedict,
+                                             with_contour=self.with_contour)
         return sample
 
     def __len__(self):
         return len(self.filenames)
 
     def __add__(self, other):
-        return HeartDataset(pd.concat[self.filenames, other.filenames])
+        return HeartDataset(pd.concat([self.filenames, other.filenames]),
+                            with_contour=self.with_contour or other.with_contour)
 
 
 def np_collate(batch):
