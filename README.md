@@ -78,7 +78,8 @@ such as U-net or Segnet like architectures, with aggressive data augmentation.
 In order to reduce search space, close-up images with only within LV space should be considered.
 In my quick implementation trained for 20 epochs, I achieved IoU of 0.87 +/- 0.01 (trained on 3 cases, tested on 1 case), 
 which is an improvement over thresholding-based approach. Still some severe morphological artifacts can be found in predictions
-(see figure below for the same slice as above).
+(see figure below for the same slice as above). This raises a concern that direct IoU might be not very representative metric
+(especially while black space outside of LV is included).
 
   Legend:
   - i-contour is in green
