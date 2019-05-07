@@ -84,6 +84,7 @@ class ContourDir(Dir):
 
 def match_case_filenames(dirname_dicom: str, 
                          dirname_i_contour:str,
+                         dirname_o_contour:str='',
                          join:str='inner') -> pd.DataFrame:
     '''matches slices in a pair of DICOM and i-contour directories
     for one series/case
@@ -93,38 +94,58 @@ def match_case_filenames(dirname_dicom: str,
     :return filenames_matched: a pandas.DataFrame with matched locations
     '''
     filenames_dicom = DicomDir(dirname_dicom).content
-    filenames_icontour = ContourDir(dirname_i_contour).content
-    filenames_matched = pd.concat([filenames_dicom, filenames_icontour],
+    filenames_i_contour = ContourDir(dirname_i_contour).content
+    filenames_matched = [filenames_dicom, filenames_i_contour]
+    if len(dirname_o_contour):
+        filenames_o_contour = ContourDir(dirname_o_contour).content
+        filenames_matched.append(filenames_o_contour)
+
+    filenames_matched = pd.concat(filenames_matched,
                                  axis=1, join=join)
-    if len(filenames_matched) < len(filenames_icontour):
+    if len(filenames_matched) < len(filenames_i_contour):
         warn(f'some dicom slices are missing: {filenames_matched.shape[0]} ' +
-              f'matches out of {filenames_icontour.shape[0]} contours')
+              f'matches out of {filenames_i_contour.shape[0]} contours')
     
     filenames_matched.index.name = 'slice_id'
     filenames_matched.reset_index(inplace=True)
     return filenames_matched
 
 
-def read_slice_with_annotations(slicedict: Dict, with_contour=False) -> Dict:
+def read_slice_with_annotations(slicedict: Dict, with_contour=False, keep_meta=False) -> Dict:
     """produces a dictionary with keys: [image, i-mask, i-contour]
     given a dictionary with disk locations of an image and a mask
     """
-    dcm = parsing.parse_dicom_file(slicedict['dicoms'])
+    try:
+        dcm = parsing.parse_dicom_file(slicedict['dicoms'])
+    except Exception as ee:
+        warn('error while reading file {}'.format(slicedict['dicoms']))
+        raise ee
     height, width = dcm['pixel_data'].shape
     
-    contour = parsing.parse_contour_file(slicedict['i-contours'])
-    mask = parsing.poly_to_mask(contour, width, height)
+    i_contour = parsing.parse_contour_file(slicedict['i-contours'])
+    i_mask = parsing.poly_to_mask(i_contour, width, height)
 
     result = {'image': dcm['pixel_data'], 
-              'imask': mask}
+              'imask': i_mask}
+
+    if 'o-contours' in slicedict and slicedict['o-contours'] is not np.nan:
+        o_contour =  parsing.parse_contour_file(slicedict['o-contours'])
+        o_mask = parsing.poly_to_mask(o_contour, width, height)
+        result['omask'] = o_mask
 
     if with_contour:
-        result['icontour'] = contour
+        result['icontour'] = i_contour
+        if 'o-contours' in slicedict:
+            result['ocontour'] = o_contour
+    if keep_meta:
+        result.update(slicedict)
 
     return result
 
 
-def get_slice_set(metadata: pd.DataFrame, dir_data = 'final_data') -> pd.DataFrame:
+def get_slice_set(metadata: pd.DataFrame, dir_data = 'final_data',
+                  o_contours=True,
+                  join='inner') -> pd.DataFrame:
     '''construct a table with paired image & annotation  paths
     for a set of series/cases listed in the metadata DataFrame
     :param metadata:   metadata from link.csv
@@ -137,9 +158,15 @@ def get_slice_set(metadata: pd.DataFrame, dir_data = 'final_data') -> pd.DataFra
         dirname_dicom =  '{}/dicoms/{}'.format(dir_data, vv['patient_id'])
         dirname_contours =  '{}/contourfiles/{}'.format(dir_data, vv['original_id'])
         dirname_i_contour =  '{}/i-contours/'.format(dirname_contours)
-        # dirname_o_contour =  '{}/o-contours/'.format(dirname_contours)
+
+        if o_contours:
+            dirname_o_contour =  '{}/o-contours/'.format(dirname_contours)
+        else:
+            dirname_o_contour = ''
         dir_filenames = match_case_filenames(dirname_dicom, 
-                             dirname_i_contour)
+                                             dirname_i_contour,
+                                             dirname_o_contour=dirname_o_contour,
+                                             join=join)
         # add a case-wide identifier
         dir_filenames.loc[:,'original_id'] = vv['original_id']
         filenames.append(dir_filenames)
