@@ -60,8 +60,6 @@ can be used to derive i-contours. To explore this possibility, I performed follo
   I also used dilation operation to post-process the thresholded image.
   The code can be found in [task4.py](task4.py) and [this notebook](asgn2-threshold.ipynb).
 
-  Other thresholding methods can be considered, but given constraint of masking, only Otsu with some pre/post-processing has been explored so far.
-
   The results are quite OK (IoU = 0.81 +/- 0.02). 
   
   Legend:
