@@ -25,12 +25,17 @@ I had to modify `get_slice_set` and `match_case_filenames` function to take
 directory name for o-contours, and `read_slice_with_annotations` function 
 to call parsing for o-contours if respective column is present in the 
 `HeartDataset.filenames` table. 
-I also added `join` flag to `match_case_filenames` for table join type, 
+I also added `join` flag for table join type to the `match_case_filenames` function,
 which is helpful for data exploration.
 I re-used same reader class `ContourDir` as for i-contours within that function.
 
 I chose to keep these functions separate from the `HeartDataset` for now as it made debugging easier.
 For production, they might be incorporated into `HeartDataset` class.
+
+As a result of changes, every item returned by `HeartDataset` objects (initialized with a table containing 
+`"o-contours"` column) now contains `omask` field
+(and `ocontour` if `with_contour=True` is specified at class initialization)
+
 
 #### Important Observations
 Not all i-contours are contained within o-contours (11 images out of 46 are affected).
@@ -53,8 +58,9 @@ can be used to derive i-contours. To explore this possibility, I performed follo
 - in order to automatically create the i-contours, given the o-contours, I applied Otsu method.
   To be able to use o-mask to narrow down the pixels considered, I had to re-implement thresholding steps.
   I also used dilation operation to post-process the thresholded image.
-  The code can be found in [task4.py](task4.py) and [this notebook](asgn2-threshold.ipynb)
-  I would consider other thresholding methods, but given constraint of masking, only Otsu with some pre/post-processing has been explored so far.
+  The code can be found in [task4.py](task4.py) and [this notebook](asgn2-threshold.ipynb).
+
+  Other thresholding methods can be considered, but given constraint of masking, only Otsu with some pre/post-processing has been explored so far.
 
   The results are quite OK (IoU = 0.81 +/- 0.02)
 
