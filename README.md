@@ -61,6 +61,7 @@ can be used to derive i-contours. To explore this possibility, I performed follo
   The code can be found in [task4.py](task4.py) and [this notebook](asgn2-threshold.ipynb).
 
   The results are quite OK (IoU = 0.81 +/- 0.02). 
+  False negative regions probably represent heart valves, which are neither the muscle nor the lumen strictly speaking.
   
   Legend:
   - o-contour is in red
