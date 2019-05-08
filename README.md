@@ -73,7 +73,8 @@ can be used to derive i-contours. To explore this possibility, I performed follo
 
 
 2. Other heuristic (non-machine learning)-based approaches, besides simple thresholding, that might work in this case:
-potentially morphologic dilation of the space outside o-contour, which had to assume some constant width of the muscle.
+- potentially morphologic dilation of the space outside o-contour, which had to assume some constant width of the muscle.
+- 3D interpolation of contours for slices that are surrounded by labelled slices
 
 3. Appropriate deep learning-based approach to solve this problem would involve any semantic segmentation model, 
 such as U-net or Segnet like architectures, with aggressive data augmentation.
